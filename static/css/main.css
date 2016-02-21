@@ -200,13 +200,14 @@ html {
 
 .post-content a {
   color: black;
+  font-weight: bold;
   text-decoration: none;
 }
 
 .post-content a:hover {
   color: black;
   font-weight: bold;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 #more-posts {
