@@ -4,7 +4,7 @@ Description
 ===========
 This is the source code of my website [pongetti.eu](http://www.pongetti.eu) developed in Google App Engine + AngularJS.
 
-You can use it as template for learning how to develop your own Google App Engine + Python + AngularJs website.
+You can use it as template for learning how to develop your own Google App Engine + Python + AngularJS website.
 
 Technologies
 ============
