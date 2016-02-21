@@ -1,0 +1,63 @@
+<span ng-if="loading" class="three-quarters-loader">Loading&#8230;</span>
+<div ng-if="done">
+    <h1 style="text-align: center">Post added</h1>
+    {{result}}
+</div>
+<div ng-if="firstStep">
+    <h1 style="text-align: center"> Add new content to the blog </h1>
+    <br>
+    <form>
+        <div class="form-group form-group-lg">
+            <label class="control-label">Hidden</label>
+            <label class="radio-inline">
+                <input ng-model="form.hidden" type="radio" checked="checked" value=0> No
+            </label>
+            <label class="radio-inline">
+                <input ng-model="form.hidden" type="radio" value=1> Yes
+            </label>
+
+    </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-6">
+                    <label for="title">Title</label>
+                    <input ng-model="form.title" 
+                        ng-change="shortUrl()"
+                        class="form-control" placeholder="Title">
+                </div>
+                <div class="col-xs-6">
+                    <label for="title">Short Url</label>
+                    <input ng-disabled="edit" ng-model="form.short_url" class="form-control" placeholder="Short Url">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="content">Content</label>
+            <textarea ui-tinymce="tinymceOptions" ng-model="form.content"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="selectTags">Tags</label>
+            <div class="row">
+                <div class="col-xs-10">
+                    <input ng-model="form.tags" class="form-control" placeholder="tags">
+                </div>
+                <div class="col-xs-2">
+                    <div class="btn-group">
+                      <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Availabel Tags<span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                      <li ng-click="tagClick(tag.tag)" ng-repeat="tag in available_tags"><a>{{tag.tag}}</a></li>
+                      </ul>
+                    </div>
+                </div>
+            </div>       
+        </div>
+        <div class="row">
+            <div class="col-xs-1 col-centered col-xs-offset-5">
+                <button type="submit" ng-click="addClick()" class="btn btn-default">Post</button>
+            </div>
+        </div>
+    </form>
+    {{tags}}
+</div>

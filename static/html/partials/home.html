@@ -1,0 +1,37 @@
+<div>
+  <span ng-if="error">{{error_description}}</span>
+  <span ng-if="loading" class="three-quarters-loader">Loading&#8230;</span>
+  <article ng-repeat="post in posts" class="post-article">
+    <header class="post-header">
+      <h1 class="post-title">
+        <a ng-href="/posts/{{post.year}}/{{post.month}}/{{post.day}}/{{post.shortUrl}}">{{post.title}}</a>
+      </h1>
+      <div class="post-metadata">
+        <ul>
+          <li>
+          <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+          {{post.date}}
+          </li>
+          <li>
+            <span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+            <a ng-href="/posts/tag/{{tag}}" class="post-tag" ng-repeat="tag in post.tags">{{tag}}</a>
+          </li>
+        </ul>
+      </div>
+    </header>
+    <section class="post-content">
+      <div ng-bind-html="trustAsHtml(post.content.slice(0, 800))"></div>
+      <div class="post-more-dots" ng-if="post.content.length > 800">continue to read...</div>
+    </section>
+    <footer class="post-footer">
+    <a ng-href="/posts/{{post.year}}/{{post.month}}/{{post.day}}/{{post.shortUrl}}">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    </a>
+    </footer>
+  </article>
+  <div id="more-posts" ng-if="more" infinite-scroll="loadMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+    <h4 ng-click="loadMore()">Load more</h4>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+application: francesco-1207
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: static/img/favicon.ico
+  upload: static/img/favicon\.ico
+
+- url: /partials
+  static_dir: static/html/partials
+
+- url: /css
+  static_dir: static/css
+
+- url: /img
+  static_dir: static/img
+
+- url: /js
+  static_dir: static/js
+
+- url: /api/posts.*
+  script: api.post.app
+
+- url: /api/tags.*
+  script: api.tag.app
+
+- url: /login
+  script: api.login.app
+
+- url: .*
+  static_files: static/html/index.html
+  upload: static/html/index\.html
+
+libraries:
+- name: webapp2
+  version: "2.5.2"
