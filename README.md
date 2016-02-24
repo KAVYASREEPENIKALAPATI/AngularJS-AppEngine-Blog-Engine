@@ -15,7 +15,7 @@ Technologies
 
 Demo
 ====
-My website is base on this code.
+My website runs this code.
 
 Usage
 =====
