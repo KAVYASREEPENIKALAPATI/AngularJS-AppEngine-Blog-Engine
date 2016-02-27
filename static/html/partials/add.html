@@ -6,6 +6,26 @@
 <div ng-if="firstStep">
     <h1 style="text-align: center"> Add new content to the blog </h1>
     <br>
+    <!-- Upload files -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadFile">Upload Image</button>
+    <!-- Modal -->
+    <div class="modal fade" id="uploadFile" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">File Upload</h4>
+          </div>
+          <div class="modal-body">
+            <iframe src="/image-upload" style="zoom:0" width="99.6%" height="200" frameborder="0"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <br>
+    <br>
+
     <form>
         <div class="form-group form-group-lg">
             <label class="control-label">Hidden</label>

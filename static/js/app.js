@@ -3,6 +3,7 @@ var blogApp = angular.module('blogApp', [
 	'infinite-scroll',
 	'ui.tinymce',
 	'sn.addthis',
+	'ngFileUpload',
 	'angulartics', 
 	'angulartics.google.analytics',
 	'blogAppControllers']);
@@ -29,6 +30,10 @@ blogApp.config(['$routeProvider',
 		.when('/add/:year/:month/:day/:shortUrl', {
 			templateUrl: 'partials/add.html',
 			controller: 'AddCtrl'
+		})
+		.when('/image-upload', {
+			templateUrl: 'partials/image-upload.html',
+			controller: 'UploadCtrl'
 		})
 		.otherwise({
 			redirectTo: '/home'

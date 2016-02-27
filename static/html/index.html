@@ -50,6 +50,8 @@
     <script src="js/angular-addthis.min.js"></script>
     <script src="js/angulartics.min.js"></script>
     <script src="js/angulartics-google-analytics.min.js"></script>
+    <script src="js/file-upload/ng-file-upload-shim.min.js"></script> <!-- for no html5 browsers support -->
+    <script src="js/file-upload/ng-file-upload.min.js"></script>
     
     <!-- Go to www.addthis.com/dashboard to customize your tools -->
     <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-56c8dc14844acf7f&async=1"></script>
@@ -72,7 +74,7 @@
   </head>
   <body>
 
-    <div id="sidebar">
+    <div id="sidebar" ng-hide="hideSidebar">
       <div id="sidebar-content">
         <h2 id="blog-title"><a href="/home">Francesco Pongetti</a></h2>
         <h3 id="blog-description">Software Eng., MBA, Googler and some other things too

@@ -40,6 +40,7 @@ def _getPostsRange(limit=None, offset=0, postSelector=None, tag=None):
         ndb.AND(model.Post.tags == tag.key,
           model.Post.hidden == False)).order(-model.Post.date)
       return postsQuery.fetch(), False
+    
     postsQuery = model.Post.query(model.Post.hidden == False).order(-model.Post.date)
     postsCount = postsQuery.count()
     posts = postsQuery.fetch(limit, offset=offset)

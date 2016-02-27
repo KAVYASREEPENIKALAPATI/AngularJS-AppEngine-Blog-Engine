@@ -27,6 +27,9 @@ handlers:
 - url: /api/tags.*
   script: api.tag.app
 
+- url: /api/image.*
+  script: api.image.app
+
 - url: /login
   script: api.login.app
 
