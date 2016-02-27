@@ -1,4 +1,4 @@
-# pongetti-website
+# AngularJS / Python App Engine Blog Engine
 
 Description
 ===========
