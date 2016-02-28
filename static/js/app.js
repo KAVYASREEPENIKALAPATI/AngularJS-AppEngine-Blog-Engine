@@ -4,17 +4,13 @@ var blogApp = angular.module('blogApp', [
 	'ui.tinymce',
 	'sn.addthis',
 	'ngFileUpload',
-	'angulartics', 
+	'angulartics',
 	'angulartics.google.analytics',
 	'blogAppControllers']);
 
 blogApp.config(['$routeProvider',
 	function($routeProvider) {
 		$routeProvider
-		.when('/home', {
-			templateUrl: 'partials/home.html',
-			controller: 'MainCtrl'
-		})
 		.when('/posts/:year/:month/:day/:shortUrl', {
 			templateUrl: 'partials/post.html',
 			controller: 'MainCtrl'
@@ -35,8 +31,12 @@ blogApp.config(['$routeProvider',
 			templateUrl: 'partials/image-upload.html',
 			controller: 'UploadCtrl'
 		})
+		.when('/', {
+			templateUrl: 'partials/home.html',
+			controller: 'MainCtrl'
+		})
 		.otherwise({
-			redirectTo: '/home'
+			redirectTo: '/'
 		});
   	}
 ]);
@@ -44,6 +44,6 @@ blogApp.config(['$routeProvider',
 blogApp.config(['$locationProvider',
 	function($locationProvider) {
 		// use the HTML5 History API
-    	$locationProvider.html5Mode(true);
+    	$locationProvider.html5Mode({ enabled: true, requireBase: true });
 	}
 ]);

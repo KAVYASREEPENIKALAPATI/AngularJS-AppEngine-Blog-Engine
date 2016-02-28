@@ -9,6 +9,10 @@ handlers:
   static_files: static/img/favicon.ico
   upload: static/img/favicon\.ico
 
+- url: /robots\.txt
+  static_files: static/robots.txt
+  upload: static/robots\.txt
+
 - url: /partials
   static_dir: static/html/partials
 
