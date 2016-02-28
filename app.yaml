@@ -33,6 +33,9 @@ handlers:
 - url: /login
   script: api.login.APP
 
+- url: /sitemap\.xml
+  script: api.sitemap.APP
+
 - url: .*
   static_files: static/html/index.html
   upload: static/html/index\.html

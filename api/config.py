@@ -4,3 +4,5 @@
 ADMIN_USERNAME = 'pongiof'
 # Google Cloud Storage bucket.
 BUCKET = '/francesco_uploads'
+# Blog canonical address.
+CANONICAL = 'http://www.pongetti.eu'

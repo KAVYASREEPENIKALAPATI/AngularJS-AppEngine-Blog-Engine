@@ -10,7 +10,8 @@ from api import tag as tag_module
 from api.model import model
 
 
-def _process_posts(posts):
+def process_posts(posts):
+    """Processes POST objects and returns a dict for each post."""
     processed_posts = []
     for post in posts:
         current_post = {'id': post.key.urlsafe(),
@@ -29,7 +30,8 @@ def _process_posts(posts):
     return processed_posts
 
 
-def _get_posts_range(limit=None, offset=0, post_selector=None, tag=None):
+def get_posts_range(limit=None, offset=0, post_selector=None, tag=None):
+    """Returns POSTS according to the parameters."""
     if post_selector:
         posts_query = model.Post.query(ndb.AND(
             model.Post.dateCompressed == post_selector[0],
@@ -43,7 +45,10 @@ def _get_posts_range(limit=None, offset=0, post_selector=None, tag=None):
     posts_query = model.Post.query(
         model.Post.hidden == False).order(-model.Post.date)
     posts_count = posts_query.count()
-    posts = posts_query.fetch(limit, offset=offset)
+    if limit:
+        posts = posts_query.fetch(limit, offset=offset)
+    else:
+        posts = posts_query.fetch(offset=offset)
     return posts, True if limit and (limit + offset) < posts_count else False
 
 
@@ -58,12 +63,12 @@ class PostHandler(webapp2.RequestHandler):
             self.response.write(json.encode(common.get_error_object(
                 'wrong input, ' + self.request.path)))
             return
-        post = _get_posts_range(post_selector=[post_date, post_short_url])[0]
+        post = get_posts_range(post_selector=[post_date, post_short_url])[0]
         if not post:
             self.response.write(json.encode(common.get_error_object(
                 'post not available')))
             return
-        post_fields = _process_posts(post)
+        post_fields = process_posts(post)
         self.response.write(json.encode(common.get_response_object(
             (post_fields, False), auth=common.is_user_auth())))
         return
@@ -80,14 +85,14 @@ class PostListHandler(webapp2.RequestHandler):
             self.response.write(json.encode(common.get_error_object(
                 'wrong input, ' + self.request.path)))
             return
-        posts_data = _get_posts_range(post_limit, post_offset)
+        posts_data = get_posts_range(post_limit, post_offset)
         posts = posts_data[0]
         more = posts_data[1]
         if not posts:
             self.response.write(json.encode(common.get_error_object(
                 'no available posts')))
             return
-        posts_fields = _process_posts(posts)
+        posts_fields = process_posts(posts)
         self.response.write(json.encode(common.get_response_object((
             posts_fields, more))))
         return
@@ -104,14 +109,14 @@ class PostTagHandler(webapp2.RequestHandler):
                 'wrong input, ' + self.request.path)))
             return
         tag_obj = tag_module.get_tags(tag=tag)[0]
-        posts_data = _get_posts_range(tag=tag_obj)
+        posts_data = get_posts_range(tag=tag_obj)
         posts = posts_data[0]
         more = posts_data[1]
         if not posts:
             self.response.write(json.encode(common.get_error_object(
                 'no available posts')))
             return
-        posts_fields = _process_posts(posts)
+        posts_fields = process_posts(posts)
         self.response.write(json.encode(common.get_response_object((
             posts_fields, more))))
         return
@@ -126,7 +131,7 @@ class PostAddHandler(webapp2.RequestHandler):
 
         form_data = json.decode(self.request.body)
         if form_data['edit']:
-            post = _get_posts_range(post_selector=
+            post = get_posts_range(post_selector=
                                     [form_data['dateCompressed'],
                                      form_data['short_url']])[0][0]
         else:
