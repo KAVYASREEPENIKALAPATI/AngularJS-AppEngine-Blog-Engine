@@ -1,73 +1,59 @@
+"""Manages image upload and serving."""
+
 import logging
-import os
 import api.cloudstorage as gcs
 import webapp2
 
-from webapp2_extras import json
-
-from api.model import model
+from api import config
 from api import common
 from google.appengine.api import images
 from google.appengine.ext import blobstore
 
-_BUCKET = '/francesco_uploads'
+
+def _create_file(file_type, filename, data):
+    write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+    gcs_file = gcs.open(filename, 'w',
+                        content_type=file_type,
+                        options={
+                            'x-goog-meta-foo': 'foo',
+                            'x-goog-meta-bar': 'bar'},
+                        retry_params=write_retry_params)
+    gcs_file.write(data)
+    gcs_file.close()
+    logging.info('File created.')
 
 
 class ImageUploadHandler(webapp2.RequestHandler):
-    def _createFile(self, file_type, filename, data):
-        logging.info('Creating file %s.\n' % filename)
+    """Handles image upload requests."""
 
-        write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-        gcs_file = gcs.open(filename,
-            'w',
-            content_type=file_type,
-            options={'x-goog-meta-foo': 'foo', 'x-goog-meta-bar': 'bar'},
-            retry_params=write_retry_params)
-        gcs_file.write(data)
-        gcs_file.close()
-        logging.info('File created.')
-
-    def post(self):
-        if not common.isUserAuth():
+    def post(self): # pylint: disable=C0111
+        if not common.is_user_auth():
             self.response.write('Sorry, you must login as admin first.')
             return
-        file = self.request.POST['file']
-        self._createFile(file.type, _BUCKET + '/' + file.filename, file.value)
+        file_data = self.request.POST['file']
+        _create_file(file_data.type, config.BUCKET + '/' + file_data.filename,
+                     file_data.value)
         self.response.write('File uploaded successfully.')
 
 
-class ImageListHandler(webapp2.RequestHandler):
-    def get(self):
-        if not common.isUserAuth():
-            self.response.write('Sorry, you must login as admin first.')
-            return
-        self.response.write('Listbucket directory mode result:\n')
-        for stat in gcs.listbucket(_BUCKET, delimiter='/'):
-            self.response.write('%r' % stat)
-            self.response.write('\n')
-            if stat.is_dir:
-                for subdir_file in gcs.listbucket(stat.filename, delimiter='/'):
-                    self.response.write('  %r' % subdir_file)
-                    self.response.write('\n')
-
-
 class ImageReadHandler(webapp2.RequestHandler):
-    def get(self):
+    """Handles image read requests."""
+    def get(self): # pylint: disable=C0111
         try:
-            path = self.request.path.split('/');
+            path = self.request.path.split('/')
             filename = path[4]
-        except:
+        except Exception:
             logging.info('invalid filename.')
             self.error(404)
             return
-        blob_key = blobstore.create_gs_key('/gs' + _BUCKET + '/' + filename)
+        blob_key = blobstore.create_gs_key('/gs' + config.BUCKET + '/' +
+                                           filename)
         img_url = images.get_serving_url(blob_key=blob_key)
         logging.info('redirect to image address %s', img_url)
         self.redirect(img_url)
 
 
-app = webapp2.WSGIApplication([
+APP = webapp2.WSGIApplication([
     (r'/api/image/upload', ImageUploadHandler),
-    (r'/api/image/list', ImageListHandler),
     (r'/api/image/read.*', ImageReadHandler)
 ], debug=True)

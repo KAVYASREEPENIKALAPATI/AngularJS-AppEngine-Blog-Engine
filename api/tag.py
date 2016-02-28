@@ -1,5 +1,4 @@
-import logging
-
+"""Manages tags."""
 import webapp2
 
 from webapp2_extras import json
@@ -7,23 +6,26 @@ from webapp2_extras import json
 from api.model import model
 from api import common
 
-def getTags(tag=None):
+def get_tags(tag=None):
+    """Returns a list of available tags."""
     if not tag:
-        tagsQuery = model.Tag.query().order(model.Tag.tag)
+        tags_query = model.Tag.query().order(model.Tag.tag)
     else:
-        tagsQuery = model.Tag.query(model.Tag.tag == tag)
-    return tagsQuery.fetch()
+        tags_query = model.Tag.query(model.Tag.tag == tag)
+    return tags_query.fetch()
+
 
 class TagListHandler(webapp2.RequestHandler):
-    def get(self):
-        tags = getTags()
-        tagsDict = []
+    """Handles tag list requests."""
+    def get(self): # pylint: disable=C0111
+        tags = get_tags()
+        tags_dict = []
         for tag in tags:
-            currentTag = {'tag': tag.tag}
-            tagsDict.append(currentTag)
-        self.response.write(json.encode(common.getResponseObject(tagsDict)))
+            current_tag = {'tag': tag.tag}
+            tags_dict.append(current_tag)
+        self.response.write(json.encode(common.get_response_object(tags_dict)))
 
 
-app = webapp2.WSGIApplication([
+APP = webapp2.WSGIApplication([
     (r'/api/tags/list', TagListHandler),
 ], debug=True)

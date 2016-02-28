@@ -22,16 +22,16 @@ handlers:
   static_dir: static/js
 
 - url: /api/posts.*
-  script: api.post.app
+  script: api.post.APP
 
 - url: /api/tags.*
-  script: api.tag.app
+  script: api.tag.APP
 
 - url: /api/image.*
-  script: api.image.app
+  script: api.image.APP
 
 - url: /login
-  script: api.login.app
+  script: api.login.APP
 
 - url: .*
   static_files: static/html/index.html

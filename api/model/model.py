@@ -1,9 +1,10 @@
+"""Module to describe data models used in Datastore."""
 from google.appengine.ext import ndb
 
 class Tag(ndb.Model):
     """Model for representing a post tag."""
     tag = ndb.StringProperty(indexed=True)
-    
+
 class Post(ndb.Model):
     """Model for representing a blog post."""
     title = ndb.StringProperty(indexed=False, required=True)
