@@ -1,6 +1,6 @@
 var blogAppControllers = angular.module('blogAppControllers', []);
 
-blogAppControllers.controller('MainCtrl', 
+blogAppControllers.controller('MainCtrl',
     function ($scope, $http, $location, $routeParams, $rootScope, $sce) {
         $scope.error = false;
         $scope.start = 0;
@@ -10,15 +10,15 @@ blogAppControllers.controller('MainCtrl',
         var jsonDest = 'api/posts/list/' + $scope.start + '/' + $scope.step;
         if ($routeParams.shortUrl) {
             singlePost = true;
-            jsonDest = ('api/posts/id/' + 
+            jsonDest = ('api/posts/id/' +
                 $routeParams.year + '/' +
-                $routeParams.month + '/' + 
+                $routeParams.month + '/' +
                 $routeParams.day + '/' +
                 $routeParams.shortUrl);
-        } 
+        }
         else if ($routeParams.tag) {
             jsonDest = 'api/posts/tag/' + $routeParams.tag
-        } 
+        }
         $scope.loading = true;
         $http.get(jsonDest).then(function(response) {
             var data = response.data;
@@ -27,7 +27,7 @@ blogAppControllers.controller('MainCtrl',
                 $scope.error_description = data['payload'];
                 $scope.error = true;
                 return;
-            } 
+            }
             $scope.posts = data['payload'][0];
             if (singlePost) {
                 $rootScope.pageTitle = $scope.posts[0].title;
@@ -38,25 +38,25 @@ blogAppControllers.controller('MainCtrl',
             $scope.more = data['payload'][1];
             $scope.loading = false;
         });
-        
+
         $scope.trustAsHtml = $sce.trustAsHtml;
-        
+
         $scope.loadMore = function() {
             $scope.start += $scope.step;
             var jsonDest = 'api/posts/list/' + $scope.start + '/' + $scope.step;
             $http.get(jsonDest).success(function(data) {
                 if (data['status'] != 'ok') {
                     return;
-                }  
+                }
                 $scope.posts = $scope.posts.concat(data['payload'][0]);
                 $scope.more = data['payload'][1];
             });
-        }   
+        }
     }
 );
 
 
-blogAppControllers.controller('AddCtrl', 
+blogAppControllers.controller('AddCtrl',
     function ($scope, $http, $routeParams) {
         $scope.edit = false;
         $scope.loading = true;
@@ -73,27 +73,27 @@ blogAppControllers.controller('AddCtrl',
             ],
             toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
             toolbar2: 'print preview media | forecolor backcolor emoticons',
-            image_advtab: true, 
+            image_advtab: true,
             force_p_newlines : false,
             forced_root_block : '',
         };
-        
+
         $http.get('api/tags/list').success(function(data) {
             if (data['status'] != 'ok') {
                 return;
             }
-            $scope.available_tags = data['payload']              
+            $scope.available_tags = data['payload']
         });
-        
+
         // Declares a new object to avoid problem with AngularJs scopes in ng-repeat.
         $scope.post = {};
         $scope.form = {};
-        
+
         if ($routeParams.shortUrl) {
             $scope.edit = true;
-            jsonDest = ('api/posts/id/' + 
+            jsonDest = ('api/posts/id/' +
                 $routeParams.year + '/' +
-                $routeParams.month + '/' + 
+                $routeParams.month + '/' +
                 $routeParams.day + '/' +
                 $routeParams.shortUrl);
 
@@ -101,7 +101,7 @@ blogAppControllers.controller('AddCtrl',
                 var data = response.data;
                 if (data['status'] != 'ok') {
                     return;
-                } 
+                }
                 $scope.post = data['payload'][0][0];
                 $scope.form.title = $scope.post.title;
                 $scope.form.content = $scope.post.content;
@@ -116,9 +116,9 @@ blogAppControllers.controller('AddCtrl',
             $scope.form.hidden = 0;
             $scope.form.tags = '';
             $scope.form.short_url = '';
-            $scope.loading = false; 
-        } 
-        
+            $scope.loading = false;
+        }
+
         $scope.shortUrl = function() {
             if (!$scope.edit) {
                 $scope.form.short_url = $scope.form.title.replace(/([^a-zA-Z0-9])/g, '-');
@@ -161,7 +161,7 @@ blogAppControllers.controller('AddCtrl',
     }
 );
 
-blogAppControllers.controller('UploadCtrl', 
+blogAppControllers.controller('UploadCtrl',
     function ($scope, $rootScope, Upload, $timeout) {
         $rootScope.hideSidebar = true;
         $scope.uploadFiles = function(files, errFiles) {

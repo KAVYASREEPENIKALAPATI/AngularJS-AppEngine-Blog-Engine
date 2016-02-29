@@ -20,8 +20,8 @@
       </div>
     </header>
     <section class="post-content">
-      <div ng-bind-html="trustAsHtml(post.content.slice(0, 1500))"></div>
-      <div class="post-more-dots" ng-if="post.content.length > 1500">continue to read...</div>
+      <span ng-bind-html="trustAsHtml(post.content.slice(0, 1500))"></span>
+      <span class="post-more-dots" ng-if="post.content.length > 1500">...</span>
     </section>
     <footer class="post-footer">
     <a ng-href="/posts/{{post.year}}/{{post.month}}/{{post.day}}/{{post.shortUrl}}">

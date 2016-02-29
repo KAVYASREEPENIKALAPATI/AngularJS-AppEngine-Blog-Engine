@@ -134,6 +134,7 @@ html {
 
 .post-more-dots {
   font-weight: bold;
+  display: inline;
 }
 
 .post-footer a {
