@@ -1,7 +1,7 @@
 <div>
   <span ng-if="error">{{error_description}}</span>
   <span ng-if="loading" class="three-quarters-loader">Loading&#8230;</span>
-  <article ng-repeat="post in posts" class="post-article">
+  <article ng-repeat="post in posts track by $index" class="post-article">
     <header class="post-header">
       <h1 class="post-title">
         <a ng-href="/posts/{{post.year}}/{{post.month}}/{{post.day}}/{{post.shortUrl}}">{{post.title}}</a>

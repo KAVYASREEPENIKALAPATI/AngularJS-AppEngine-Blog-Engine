@@ -1,6 +1,5 @@
 """Manages image upload and serving."""
 
-import logging
 import api.cloudstorage as gcs
 import webapp2
 
@@ -20,7 +19,6 @@ def _create_file(file_type, filename, data):
                         retry_params=write_retry_params)
     gcs_file.write(data)
     gcs_file.close()
-    logging.info('File created.')
 
 
 class ImageUploadHandler(webapp2.RequestHandler):
@@ -38,22 +36,18 @@ class ImageUploadHandler(webapp2.RequestHandler):
 
 class ImageReadHandler(webapp2.RequestHandler):
     """Handles image read requests."""
-    def get(self): # pylint: disable=C0111
-        try:
-            path = self.request.path.split('/')
-            filename = path[4]
-        except Exception:
-            logging.info('invalid filename.')
+    def get(self, image_name): # pylint: disable=C0111
+        if not image_name:
             self.error(404)
             return
         blob_key = blobstore.create_gs_key('/gs' + config.BUCKET + '/' +
-                                           filename)
+                                           image_name)
         img_url = images.get_serving_url(blob_key=blob_key)
-        logging.info('redirect to image address %s', img_url)
         self.redirect(img_url)
 
 
-APP = webapp2.WSGIApplication([
-    (r'/api/image/upload', ImageUploadHandler),
-    (r'/api/image/read.*', ImageReadHandler)
-], debug=True)
+ROUTES = [webapp2.Route(r'/api/image/upload', handler=ImageUploadHandler),
+          webapp2.Route(r'/api/image/read/<image_name:.+>',
+                        handler=ImageReadHandler)
+         ]
+APP = webapp2.WSGIApplication(routes=ROUTES, debug=True)

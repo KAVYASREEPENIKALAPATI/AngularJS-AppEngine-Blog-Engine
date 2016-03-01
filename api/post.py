@@ -54,16 +54,12 @@ def get_posts_range(limit=None, offset=0, post_selector=None, tag=None):
 
 class PostHandler(webapp2.RequestHandler):
     """Handles single post view."""
-    def get(self): # pylint: disable=C0111
-        try:
-            path = self.request.path.split('/')
-            post_date = '/'.join(path[4:7])
-            post_short_url = path[7]
-        except Exception:
+    def get(self, date, short_url): # pylint: disable=C0111
+        if not (date and short_url):
             self.response.write(json.encode(common.get_error_object(
                 'wrong input, ' + self.request.path)))
             return
-        post = get_posts_range(post_selector=[post_date, post_short_url])[0]
+        post = get_posts_range(post_selector=[date, short_url])[0]
         if not post:
             self.response.write(json.encode(common.get_error_object(
                 'post not available')))
@@ -76,16 +72,12 @@ class PostHandler(webapp2.RequestHandler):
 
 class PostListHandler(webapp2.RequestHandler):
     """Handles list all posts."""
-    def get(self): # pylint: disable=C0111
-        try:
-            path = self.request.path.split('/')
-            post_offset = int(path[4])
-            post_limit = int(path[5])
-        except Exception:
+    def get(self, offset, limit): # pylint: disable=C0111
+        if not (offset and limit):
             self.response.write(json.encode(common.get_error_object(
                 'wrong input, ' + self.request.path)))
             return
-        posts_data = get_posts_range(post_limit, post_offset)
+        posts_data = get_posts_range(int(limit), int(offset))
         posts = posts_data[0]
         more = posts_data[1]
         if not posts:
@@ -100,15 +92,17 @@ class PostListHandler(webapp2.RequestHandler):
 
 class PostTagHandler(webapp2.RequestHandler):
     """Handles list all posts for a tag."""
-    def get(self): # pylint: disable=C0111
-        try:
-            path = self.request.path.split('/')
-            tag = path[4]
-        except Exception:
+    def get(self, tag): # pylint: disable=C0111
+        if not tag:
             self.response.write(json.encode(common.get_error_object(
                 'wrong input, ' + self.request.path)))
             return
-        tag_obj = tag_module.get_tags(tag=tag)[0]
+        try:
+            tag_obj = tag_module.get_tags(tag=tag)[0]
+        except Exception:
+            self.response.write(json.encode(common.get_error_object(
+                'Tag not available')))
+            return
         posts_data = get_posts_range(tag=tag_obj)
         posts = posts_data[0]
         more = posts_data[1]
@@ -132,8 +126,8 @@ class PostAddHandler(webapp2.RequestHandler):
         form_data = json.decode(self.request.body)
         if form_data['edit']:
             post = get_posts_range(post_selector=
-                                    [form_data['dateCompressed'],
-                                     form_data['short_url']])[0][0]
+                                   [form_data['dateCompressed'],
+                                    form_data['short_url']])[0][0]
         else:
             post = model.Post()
 
@@ -163,10 +157,12 @@ class PostAddHandler(webapp2.RequestHandler):
         self.response.write('Post correctly added.')
         return
 
-
-APP = webapp2.WSGIApplication(
-    [(r'/api/posts/list/.+', PostListHandler),
-     (r'/api/posts/tag/.+', PostTagHandler),
-	    (r'/api/posts/id/.+', PostHandler),
-     (r'/api/posts/add.*', PostAddHandler)
-    ], debug=True)
+ROUTES = [webapp2.Route(r'/api/posts/tag/<tag:.+>', handler=PostTagHandler),
+          webapp2.Route(r'/api/posts/list/<offset:\d+>/<limit:\d+>',
+                        handler=PostListHandler),
+          webapp2.Route(
+              r'/api/posts/id/<date:\d{4}/\d{2}/\d{2}>/<short_url:.+>',
+              handler=PostHandler),
+          webapp2.Route(r'/api/posts/add', handler=PostAddHandler),
+         ]
+APP = webapp2.WSGIApplication(routes=ROUTES, debug=True)
