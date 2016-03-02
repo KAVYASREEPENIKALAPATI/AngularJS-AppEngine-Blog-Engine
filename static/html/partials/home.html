@@ -3,9 +3,9 @@
   <span ng-if="loading" class="three-quarters-loader">Loading&#8230;</span>
   <article ng-repeat="post in posts track by $index" class="post-article">
     <header class="post-header">
-      <h1 class="post-title">
+      <h2 class="post-title">
         <a ng-href="/posts/{{post.year}}/{{post.month}}/{{post.day}}/{{post.shortUrl}}">{{post.title}}</a>
-      </h1>
+      </h2>
       <div class="post-metadata">
         <ul>
           <li>
