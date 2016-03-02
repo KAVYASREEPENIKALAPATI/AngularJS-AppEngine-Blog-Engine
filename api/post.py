@@ -97,6 +97,7 @@ class PostTagHandler(webapp2.RequestHandler):
             self.response.write(json.encode(common.get_error_object(
                 'wrong input, ' + self.request.path)))
             return
+        tag = tag.replace('-', ' ')
         try:
             tag_obj = tag_module.get_tags(tag=tag)[0]
         except Exception:
